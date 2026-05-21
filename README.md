@@ -17,6 +17,7 @@ efficient-rag-pipeline/
 │       ├── __init__.py
 │       ├── utils.py             # Shared: sentence_splitter
 │       └── naive.py             # Fixed-size character chunking
+|       └── sentence.py
 ```
 
 ## Quick Start
