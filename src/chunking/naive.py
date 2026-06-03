@@ -3,7 +3,6 @@ Naive Fixed-Size Chunking
 
 Splits text into chunks of fixed character length with overlap.
 
-Original code from: 01_chunking.ipynb
 """
 
 import uuid
@@ -47,9 +46,8 @@ def chunk(text, chunk_size=200, overlap=50):
     return chunk_list
 
 
-# -----------------------------------------------
 # STANDALONE TEST
-# -----------------------------------------------
+
 if __name__ == "__main__":
 
     test_text = "Neural networks process information. Deep learning uses neural networks extensively. AI systems automate decision making. Technology changes modern industries."
