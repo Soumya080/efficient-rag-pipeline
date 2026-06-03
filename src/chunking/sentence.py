@@ -4,7 +4,6 @@ Sentence-Based Chunking
 Splits text into sentences first, then groups sentences
 into chunks up to a character limit with sentence-level overlap.
 
-Original code from: 02_chunking_sentence_based.ipynb
 """
 
 import uuid
@@ -85,9 +84,9 @@ def chunk(text, chunk_size=200, overlap=1):
     return chunk_list
 
 
-# -----------------------------------------------
+
 # STANDALONE TEST
-# -----------------------------------------------
+ 
 if __name__ == "__main__":
 
     test_text = "Neural networks process information. Deep learning uses neural networks extensively. AI systems automate decision making. Technology changes modern industries. Software tools improve business productivity. Companies use analytics platforms daily."
