@@ -3,7 +3,6 @@ Embedding encoder for RAG pipeline.
 
 Wraps sentence-transformers model for encoding text into vectors.
 
-Original usage from: 01_RETRIVER.ipynb, 03_SEMANTIC_CHUNKING_OWN.ipynb
 """
 
 from sentence_transformers import SentenceTransformer
