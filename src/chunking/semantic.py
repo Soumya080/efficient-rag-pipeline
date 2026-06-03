@@ -5,7 +5,7 @@ Groups sentences based on embedding similarity using a running centroid.
 Sentences that are semantically similar stay in the same chunk.
 When similarity drops below threshold, a new chunk starts.
 
-Original code from: 01_RETRIVER.ipynb — semantic_chunker_v3()
+
 
 NOTE: This chunker requires an embedding encoder (unlike naive/sentence).
       Pass the encoder when calling chunk().
@@ -68,21 +68,21 @@ def chunk(text, encoder, threshold=0.3, max_chunk_size=200, alpha=0.5):
             current_length += sentence_length
             continue
 
-        # compute similarity to chunk centroid
+        # compute similarity to chunk centroid using cosine_simliarity 
         similarity = cosine_similarity(centroid, current_embedding)
 
-        # if similar enough AND fits in size limit, add to current chunk
+        # if similar enough AND fits in size limit, add to current chunk / both needs to statisfy 
         if similarity >= threshold and current_length + sentence_length <= max_chunk_size:
             current_chunk.append(current_sentence)
             embedding_list.append(current_embedding)
 
             # update centroid with exponential moving average
-            centroid = (alpha * centroid + (1 - alpha) * current_embedding)
+            centroid = (alpha * centroid + (1 - alpha) * current_embedding)  # centroid calcultor
 
             similarity_scores.append(similarity)
             current_length += sentence_length
 
-        # otherwise, finalize current chunk and start new one
+        # otherwise, finalize current chunk and start new 
         else:
             chunk_content = " ".join(current_chunk)
             chunk_data = {
@@ -125,10 +125,8 @@ def chunk(text, encoder, threshold=0.3, max_chunk_size=200, alpha=0.5):
 
     return chunk_list
 
-
-# -----------------------------------------------
+ 
 # STANDALONE TEST
-# -----------------------------------------------
 if __name__ == "__main__":
 
     from src.embeddings.encoder import EmbeddingEncoder
