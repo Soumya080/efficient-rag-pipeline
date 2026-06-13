@@ -1,1 +1,3 @@
 numpy
+sentence-transformers
+ollama
