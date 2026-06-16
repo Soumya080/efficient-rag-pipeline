@@ -1,34 +1,20 @@
 """
-RAG Pipeline — Configurable & Experiment-Ready
+RAG Pipeline — Fully Integrated Version with Hybrid Retrieval
 
-This is the core pipeline class. You configure WHICH chunking strategy
-and WHICH retrieval strategy to use, then run it.
-
-For experiments, you swap strategies and compare results.
-
-Usage:
-    from src.pipeline import RAGPipeline
-
-    pipeline = RAGPipeline(
-        chunking_strategy="semantic",   # or "naive", "sentence"
-        retrieval_strategy="dense",     # only "dense" for now
-    )
-
-    result = pipeline.run(document, query)
+Integrates:
+- Chunking: Naive, Sentence, Semantic
+- Retrieval: Dense (Brute-Force), Dense (FAISS), Sparse (BM25), Hybrid (FAISS + BM25)
 """
 
 import time
 
 from src.embeddings.encoder import EmbeddingEncoder
 from src.chunking import naive, sentence, semantic
-from src.retrieval.dense import retrieve, expand_neighbors, build_context
+from src.retrieval.dense import retrieve as brute_force_dense, expand_neighbors, build_context
+from src.retrieval.dense_faiss import FAISSRetriever
+from src.retrieval.sparse import BM25Retriever
+from src.retrieval.hybrid import reciprocal_rank_fusion
 from src.generation.generator import build_rag_prompt, generate_answer
-
-
-# ============================================================
-# MAP: strategy name → chunking module
-# ============================================================
-# When you add a new chunking strategy, just add it here.
 
 CHUNKING_STRATEGIES = {
     "naive": naive,
@@ -36,223 +22,110 @@ CHUNKING_STRATEGIES = {
     "semantic": semantic,
 }
 
-# When you add new retrieval strategies (bm25, hybrid, faiss),
-# add them here the same way.
-
-
 class RAGPipeline:
-    """
-    Configurable RAG pipeline.
-
-    Lets you swap chunking and retrieval strategies for experiments.
-    Tracks timing and stats for each run.
-    """
-
-    def __init__(self, chunking_strategy="semantic", model_name="all-MiniLM-L6-v2"):
+    def __init__(self, chunking_strategy="semantic", retrieval_mode="hybrid", model_name="all-MiniLM-L6-v2"):
         """
-        Initialize the pipeline.
-
         Args:
             chunking_strategy: "naive", "sentence", or "semantic"
-            model_name: Embedding model name
+            retrieval_mode: "dense" (brute-force), "faiss" (fast dense), "sparse" (BM25), "hybrid" (RRF)
+            model_name: Embedding encoder model
         """
-        # validate strategy
         if chunking_strategy not in CHUNKING_STRATEGIES:
-            raise ValueError(
-                f"Unknown chunking strategy: '{chunking_strategy}'. "
-                f"Choose from: {list(CHUNKING_STRATEGIES.keys())}"
-            )
-
+            raise ValueError(f"Unknown chunking: {chunking_strategy}")
+            
         self.chunking_strategy = chunking_strategy
         self.chunker = CHUNKING_STRATEGIES[chunking_strategy]
+        self.retrieval_mode = retrieval_mode
         self.model_name = model_name
-
-        # load encoder
-        print(f"\n[Pipeline] Loading encoder: {model_name}")
+        
+        print(f"[Pipeline] Initializing Encoder: {model_name}...")
         self.encoder = EmbeddingEncoder(model_name)
+        
+        # Sparse module instantiation
+        self.sparse_retriever = BM25Retriever()
+        
+        # Dense FAISS module instantiation
+        self.faiss_retriever = FAISSRetriever(self.encoder.dimension)
+        
+        print(f"[Pipeline] Setup Config: Chunker='{chunking_strategy}', Mode='{retrieval_mode}'\n")
 
-        print(f"[Pipeline] Chunking strategy: {chunking_strategy}")
-        print(f"[Pipeline] Ready.\n")
-
-    def chunk_document(self, document, **chunk_kwargs):
-        """
-        Chunk a document using the selected strategy.
-
-        Args:
-            document: Input text
-            **chunk_kwargs: Strategy-specific params
-                naive:    chunk_size, overlap
-                sentence: chunk_size, overlap
-                semantic: threshold, max_chunk_size, alpha
-
-        Returns:
-            List of chunk dicts
-        """
-        # semantic chunker needs encoder; naive/sentence don't
-        if self.chunking_strategy == "semantic":
-            chunks = self.chunker.chunk(
-                document,
-                encoder=self.encoder,
-                **chunk_kwargs
-            )
-        else:
-            chunks = self.chunker.chunk(document, **chunk_kwargs)
-
-        return chunks
-
-    def run(self, document, query, top_k=3, min_similarity=0.2,
-            use_expansion=True, use_llm=False, llm_model="phi3",
-            chunk_kwargs=None, verbose=True):
-        """
-        Run the full RAG pipeline.
-
-        Steps:
-            1. Chunk document  (selected strategy)
-            2. Embed chunks    (encoder)
-            3. Retrieve        (dense cosine similarity)
-            4. Expand          (neighbor chunks, optional)
-            5. Build context   (concatenate)
-            6. Generate        (Ollama, optional)
-
-        Args:
-            document: Input text document
-            query: User's question
-            top_k: Number of chunks to retrieve
-            min_similarity: Minimum similarity threshold
-            use_expansion: Whether to expand with neighbor chunks
-            use_llm: Whether to call Ollama for generation
-            llm_model: Ollama model name
-            chunk_kwargs: Dict of params for the chunking strategy
-            verbose: Print progress
-
-        Returns:
-            Dict with all pipeline outputs + timing stats
-        """
+    def run(self, document, query, top_k=3, min_similarity=0.2, use_expansion=True, use_llm=False, llm_model="phi3", chunk_kwargs=None, verbose=True):
         if chunk_kwargs is None:
             chunk_kwargs = {}
-
+            
         stats = {}
         t_start = time.time()
-
-        # -----------------------------------------
-        # STEP 1: Chunk document
-        # -----------------------------------------
+        
+        # 1. Chunk Document
         t = time.time()
-        chunks = self.chunk_document(document, **chunk_kwargs)
+        if self.chunking_strategy == "semantic":
+            chunks = self.chunker.chunk(document, encoder=self.encoder, **chunk_kwargs)
+        else:
+            chunks = self.chunker.chunk(document, **chunk_kwargs)
         stats["chunking_time"] = time.time() - t
         stats["num_chunks"] = len(chunks)
-
-        if verbose:
-            print(f"[Step 1] Chunking ({self.chunking_strategy}): "
-                  f"{len(chunks)} chunks in {stats['chunking_time']:.3f}s")
-
-        # -----------------------------------------
-        # STEP 2: Embed chunks
-        # -----------------------------------------
+        
+        # 2. Embed Chunks
         t = time.time()
         chunks = self.encoder.generate_chunk_embeddings(chunks)
         stats["embedding_time"] = time.time() - t
-
-        if verbose:
-            print(f"[Step 2] Embedding: {len(chunks)} chunks in "
-                  f"{stats['embedding_time']:.3f}s")
-
-        # -----------------------------------------
-        # STEP 3: Retrieve
-        # -----------------------------------------
+        
+        # Build Index states
+        self.sparse_retriever.fit(chunks)
+        self.faiss_retriever.add_chunks(chunks)
+        
+        # 3. Retrieve
         t = time.time()
-        retrieved = retrieve(
-            query=query,
-            chunk_list=chunks,
-            encoder=self.encoder,
-            top_k=top_k,
-            min_similarity=min_similarity
-        )
+        query_embedding = self.encoder.encode(query)
+        
+        if self.retrieval_mode == "dense":
+            retrieved = brute_force_dense(query, chunks, self.encoder, top_k, min_similarity)
+        elif self.retrieval_mode == "faiss":
+            retrieved = self.faiss_retriever.retrieve(query_embedding, top_k)
+        elif self.retrieval_mode == "sparse":
+            retrieved = self.sparse_retriever.retrieve(query, top_k)
+        elif self.retrieval_mode == "hybrid":
+            dense_res = self.faiss_retriever.retrieve(query_embedding, top_k=5)
+            sparse_res = self.sparse_retriever.retrieve(query, top_k=5)
+            retrieved = reciprocal_rank_fusion(dense_res, sparse_res, top_n=top_k)
+        else:
+            raise ValueError(f"Unknown mode: {self.retrieval_mode}")
+            
         stats["retrieval_time"] = time.time() - t
         stats["num_retrieved"] = len(retrieved)
-
-        if verbose:
-            print(f"[Step 3] Retrieval: {len(retrieved)} chunks in "
-                  f"{stats['retrieval_time']:.3f}s")
-
-        # -----------------------------------------
-        # STEP 4: Expand neighbors (optional)
-        # -----------------------------------------
+        
+        # 4. Context Expansion
         if use_expansion and len(retrieved) > 0:
             expanded = expand_neighbors(retrieved, chunks)
-            stats["num_expanded"] = len(expanded)
         else:
             expanded = retrieved
-            stats["num_expanded"] = len(retrieved)
-
-        if verbose:
-            print(f"[Step 4] Expansion: {stats['num_expanded']} chunks "
-                  f"(expansion={'ON' if use_expansion else 'OFF'})")
-
-        # -----------------------------------------
-        # STEP 5: Build context
-        # -----------------------------------------
+        stats["num_expanded"] = len(expanded)
+        
+        # 5. Build context
         context = build_context(expanded)
         stats["context_length"] = len(context)
-        stats["context_tokens_approx"] = len(context.split())
-
-        if verbose:
-            print(f"[Step 5] Context: {len(context)} chars, "
-                  f"~{stats['context_tokens_approx']} words")
-
-        # -----------------------------------------
-        # STEP 6: Generate (optional)
-        # -----------------------------------------
+        
+        # 6. Optional generation
         prompt = build_rag_prompt(query, context)
         answer = None
-
         if use_llm:
             t = time.time()
             answer = generate_answer(prompt, model_name=llm_model)
             stats["generation_time"] = time.time() - t
-
-            if verbose:
-                print(f"[Step 6] Generation: done in "
-                      f"{stats['generation_time']:.3f}s")
-        else:
-            if verbose:
-                print(f"[Step 6] Generation: skipped (use_llm=False)")
-
+            
         stats["total_time"] = time.time() - t_start
-
-        # -----------------------------------------
-        # Build result
-        # -----------------------------------------
+        
         result = {
             "query": query,
-            "chunking_strategy": self.chunking_strategy,
-            "chunk_kwargs": chunk_kwargs,
             "chunks": chunks,
             "retrieved": retrieved,
             "expanded": expanded,
             "context": context,
-            "prompt": prompt,
             "answer": answer,
-            "stats": stats,
+            "stats": stats
         }
-
+        
         if verbose:
-            print(f"\n[Done] Total: {stats['total_time']:.3f}s")
-            self._print_retrieved(query, retrieved)
-
+            print(f"[Done] Processed pipeline in {stats['total_time']:.4f}s using '{self.retrieval_mode}' search.")
+            
         return result
-
-    def _print_retrieved(self, query, results):
-        """Pretty-print retrieval results."""
-        print("\n" + "=" * 70)
-        print(f"QUERY: '{query}'")
-        print(f"Retrieved: {len(results)} chunks")
-        print("=" * 70)
-
-        for i, res in enumerate(results, start=1):
-            score = res.get("score", 0.0)
-            content = res.get("content", "").strip()
-            print(f"\n[{i}] SIMILARITY: {score:.4f}")
-            print(f"    {content[:120]}{'...' if len(content) > 120 else ''}")
-
-        print("=" * 70)

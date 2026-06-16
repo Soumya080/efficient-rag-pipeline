@@ -1,3 +1,4 @@
-numpy
 sentence-transformers
+numpy
 ollama
+faiss-cpu
