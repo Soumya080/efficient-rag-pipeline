@@ -1,0 +1,4 @@
+Machine Learning is divided into three main categories: supervised learning, unsupervised learning, and reinforcement learning.
+Supervised learning uses labeled data to train models for classification (predicting discrete labels) or regression (predicting continuous values).
+Unsupervised learning uses unlabeled data to discover hidden patterns, such as clustering (grouping similar data points) or dimensionality reduction (like PCA).
+A key challenge in ML is Overfitting, where the model learns the training data too well but fails to generalize to new data. Regularization techniques (L1/L2) help mitigate this.

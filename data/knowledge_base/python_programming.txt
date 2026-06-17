@@ -1,0 +1,5 @@
+Python is a high-level, interpreted programming language known for its readability and simplicity.
+It provides built-in data structures like lists, dictionaries, sets, and tuples.
+Python supports multiple programming paradigms, including procedural, object-oriented (OOP), and functional programming.
+Decorators are a powerful feature in Python that allows you to modify the behavior of a function or class without changing its source code.
+List comprehensions provide a concise way to create lists. Generators allow for memory-efficient iteration over large sequences.

@@ -1,0 +1,4 @@
+Reinforcement Learning (RL) is an area of machine learning where an agent learns to make decisions by performing actions in an environment to maximize cumulative reward.
+The process is modeled as a Markov Decision Process (MDP), defined by states, actions, transition probabilities, and rewards.
+Q-learning is a popular value-based RL algorithm where the agent learns a Q-function that estimates the expected return for taking an action in a state.
+Deep Q-Networks (DQN) combine Q-learning with deep neural networks. Policy gradient methods, on the other hand, directly optimize the agent's policy.

@@ -1,0 +1,5 @@
+BM25 (Best Matching 25) is a robust ranking function used in information retrieval, particularly for sparse retrieval.
+It is an extension of TF-IDF (Term Frequency - Inverse Document Frequency).
+Term Frequency measures how often a word appears in a document, while Inverse Document Frequency measures how rare the word is across the entire corpus.
+BM25 improves upon TF-IDF by adding term frequency saturation (preventing overly repeated words from dominating) and document length normalization (penalizing excessively long documents).
+It is still highly effective for exact keyword matching.

@@ -1,0 +1,5 @@
+Retrieval-Augmented Generation (RAG) enhances Large Language Models (LLMs) by giving them access to an external knowledge base.
+A typical RAG pipeline has two phases: Ingestion and Query.
+During ingestion, documents are split into smaller chunks (chunking) and converted into dense vectors (embeddings) stored in a vector database.
+During querying, the user's question is also embedded. The system retrieves the most similar chunks (top-k) using nearest neighbor search.
+These chunks are then provided as context to the LLM, which generates a factual answer, reducing hallucinations.

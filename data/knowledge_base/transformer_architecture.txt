@@ -1,0 +1,5 @@
+The Transformer architecture, introduced in 'Attention is All You Need', revolutionized natural language processing.
+It discards recurrent layers (RNNs/LSTMs) in favor of the self-attention mechanism.
+Self-attention computes a weighted representation of all words in a sequence for each word, capturing long-range dependencies effectively.
+The core operation involves computing Query (Q), Key (K), and Value (V) matrices. 
+Transformers consist of an encoder and a decoder, though models like BERT are encoder-only and models like GPT are decoder-only.

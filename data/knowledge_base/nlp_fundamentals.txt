@@ -1,0 +1,4 @@
+Natural Language Processing (NLP) enables computers to understand, interpret, and generate human language.
+A crucial first step is Tokenization, where text is split into smaller units (tokens) such as words or subwords (like BPE or WordPiece).
+Tokens are then mapped to dense vector representations called Embeddings (e.g., Word2Vec, GloVe, or Contextual embeddings from BERT).
+Language modeling is the task of predicting the next word in a sequence. Modern NLP heavily relies on pre-trained language models fine-tuned on specific downstream tasks like sentiment analysis or question answering.

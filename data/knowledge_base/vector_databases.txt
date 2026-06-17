@@ -1,0 +1,5 @@
+Vector databases are specialized storage systems optimized for storing and querying high-dimensional vectors (embeddings).
+They perform Approximate Nearest Neighbor (ANN) search rather than exact nearest neighbor (KNN) to ensure scalability.
+FAISS (Facebook AI Similarity Search) is a popular library for efficient similarity search. It provides various indexing algorithms like Flat L2, IVFFlat, and HNSW.
+HNSW (Hierarchical Navigable Small World) is a graph-based index that offers excellent query speed and recall but requires more memory.
+Other popular vector databases include Milvus, Pinecone, Qdrant, and Chroma.

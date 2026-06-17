@@ -1,0 +1,5 @@
+Deep learning is a subset of machine learning based on artificial neural networks with multiple layers. 
+These neural networks are inspired by the human brain. Each layer processes the input data and extracts features.
+The fundamental building blocks are neurons, which compute a weighted sum of inputs and apply an activation function (like ReLU or Sigmoid).
+Training involves backpropagation, where the error is calculated using a loss function and propagated backward through the network to update the weights using gradient descent.
+Adam and SGD are common optimizers.

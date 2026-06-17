@@ -2,5 +2,3 @@ sentence-transformers
 numpy
 ollama
 faiss-cpu
-datasets
-tqdm

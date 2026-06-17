@@ -1,0 +1,4 @@
+AI Ethics is a crucial field addressing the moral implications and societal impact of artificial intelligence.
+A major concern is Algorithmic Bias, where AI systems inherit and amplify human prejudices present in their training data, leading to unfair outcomes in areas like hiring or criminal justice.
+Interpretability and Explainability are also vital, especially in high-stakes domains like healthcare, where users need to understand why an AI made a specific decision.
+Other ethical considerations include privacy, job displacement, accountability, and the long-term safety of advanced AI systems.
