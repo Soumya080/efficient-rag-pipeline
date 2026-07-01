@@ -1,0 +1,262 @@
+{
+  "nq": {
+    "k_1": {
+      "oracle": {
+        "oracle_mean": 0.484,
+        "best_fixed_name": "dense",
+        "best_fixed_score": 0.474,
+        "headroom_absolute": 0.010000000000000009,
+        "headroom_relative_pct": 2.1097046413502127,
+        "per_query_best_counts": {
+          "hybrid": 4,
+          "dense": 204,
+          "bm25": 292
+        },
+        "per_retriever_means": {
+          "bm25": 0.068,
+          "dense": 0.474,
+          "hybrid": 0.114
+        }
+      },
+      "disagreement": {
+        "total_queries": 500,
+        "all_agree": 291,
+        "all_agree_pct": 58.199999999999996,
+        "disagree": 209,
+        "disagree_pct": 41.8,
+        "all_correct": 33,
+        "all_correct_pct": 6.6000000000000005,
+        "none_correct": 258,
+        "none_correct_pct": 51.6,
+        "some_correct": 209,
+        "some_correct_pct": 41.8
+      }
+    },
+    "k_3": {
+      "oracle": {
+        "oracle_mean": 0.676,
+        "best_fixed_name": "dense",
+        "best_fixed_score": 0.662,
+        "headroom_absolute": 0.014000000000000012,
+        "headroom_relative_pct": 2.1148036253776454,
+        "per_query_best_counts": {
+          "hybrid": 5,
+          "bm25": 216,
+          "dense": 279
+        },
+        "per_retriever_means": {
+          "bm25": 0.108,
+          "dense": 0.662,
+          "hybrid": 0.19
+        }
+      },
+      "disagreement": {
+        "total_queries": 500,
+        "all_agree": 212,
+        "all_agree_pct": 42.4,
+        "disagree": 288,
+        "disagree_pct": 57.599999999999994,
+        "all_correct": 50,
+        "all_correct_pct": 10.0,
+        "none_correct": 162,
+        "none_correct_pct": 32.4,
+        "some_correct": 288,
+        "some_correct_pct": 57.599999999999994
+      }
+    },
+    "k_5": {
+      "oracle": {
+        "oracle_mean": 0.75,
+        "best_fixed_name": "dense",
+        "best_fixed_score": 0.74,
+        "headroom_absolute": 0.010000000000000009,
+        "headroom_relative_pct": 1.3513513513513526,
+        "per_query_best_counts": {
+          "dense": 309,
+          "bm25": 190,
+          "hybrid": 1
+        },
+        "per_retriever_means": {
+          "bm25": 0.13,
+          "dense": 0.74,
+          "hybrid": 0.238
+        }
+      },
+      "disagreement": {
+        "total_queries": 500,
+        "all_agree": 185,
+        "all_agree_pct": 37.0,
+        "disagree": 315,
+        "disagree_pct": 63.0,
+        "all_correct": 60,
+        "all_correct_pct": 12.0,
+        "none_correct": 125,
+        "none_correct_pct": 25.0,
+        "some_correct": 315,
+        "some_correct_pct": 63.0
+      }
+    },
+    "k_10": {
+      "oracle": {
+        "oracle_mean": 0.878,
+        "best_fixed_name": "dense",
+        "best_fixed_score": 0.86,
+        "headroom_absolute": 0.018000000000000016,
+        "headroom_relative_pct": 2.0930232558139554,
+        "per_query_best_counts": {
+          "bm25": 157,
+          "dense": 339,
+          "hybrid": 4
+        },
+        "per_retriever_means": {
+          "bm25": 0.192,
+          "dense": 0.86,
+          "hybrid": 0.574
+        }
+      },
+      "disagreement": {
+        "total_queries": 500,
+        "all_agree": 150,
+        "all_agree_pct": 30.0,
+        "disagree": 350,
+        "disagree_pct": 70.0,
+        "all_correct": 89,
+        "all_correct_pct": 17.8,
+        "none_correct": 61,
+        "none_correct_pct": 12.2,
+        "some_correct": 350,
+        "some_correct_pct": 70.0
+      }
+    }
+  },
+  "triviaqa": {
+    "k_1": {
+      "oracle": {
+        "oracle_mean": 0.552,
+        "best_fixed_name": "dense",
+        "best_fixed_score": 0.526,
+        "headroom_absolute": 0.026000000000000023,
+        "headroom_relative_pct": 4.942965779467685,
+        "per_query_best_counts": {
+          "hybrid": 6,
+          "bm25": 277,
+          "dense": 217
+        },
+        "per_retriever_means": {
+          "bm25": 0.106,
+          "dense": 0.526,
+          "hybrid": 0.136
+        }
+      },
+      "disagreement": {
+        "total_queries": 500,
+        "all_agree": 268,
+        "all_agree_pct": 53.6,
+        "disagree": 232,
+        "disagree_pct": 46.400000000000006,
+        "all_correct": 44,
+        "all_correct_pct": 8.799999999999999,
+        "none_correct": 224,
+        "none_correct_pct": 44.800000000000004,
+        "some_correct": 232,
+        "some_correct_pct": 46.400000000000006
+      }
+    },
+    "k_3": {
+      "oracle": {
+        "oracle_mean": 0.734,
+        "best_fixed_name": "dense",
+        "best_fixed_score": 0.71,
+        "headroom_absolute": 0.02400000000000002,
+        "headroom_relative_pct": 3.380281690140848,
+        "per_query_best_counts": {
+          "bm25": 207,
+          "dense": 290,
+          "hybrid": 3
+        },
+        "per_retriever_means": {
+          "bm25": 0.148,
+          "dense": 0.71,
+          "hybrid": 0.22
+        }
+      },
+      "disagreement": {
+        "total_queries": 500,
+        "all_agree": 197,
+        "all_agree_pct": 39.4,
+        "disagree": 303,
+        "disagree_pct": 60.6,
+        "all_correct": 64,
+        "all_correct_pct": 12.8,
+        "none_correct": 133,
+        "none_correct_pct": 26.6,
+        "some_correct": 303,
+        "some_correct_pct": 60.6
+      }
+    },
+    "k_5": {
+      "oracle": {
+        "oracle_mean": 0.802,
+        "best_fixed_name": "dense",
+        "best_fixed_score": 0.792,
+        "headroom_absolute": 0.010000000000000009,
+        "headroom_relative_pct": 1.2626262626262637,
+        "per_query_best_counts": {
+          "bm25": 178,
+          "dense": 320,
+          "hybrid": 2
+        },
+        "per_retriever_means": {
+          "bm25": 0.158,
+          "dense": 0.792,
+          "hybrid": 0.284
+        }
+      },
+      "disagreement": {
+        "total_queries": 500,
+        "all_agree": 172,
+        "all_agree_pct": 34.4,
+        "disagree": 328,
+        "disagree_pct": 65.60000000000001,
+        "all_correct": 73,
+        "all_correct_pct": 14.6,
+        "none_correct": 99,
+        "none_correct_pct": 19.8,
+        "some_correct": 328,
+        "some_correct_pct": 65.60000000000001
+      }
+    },
+    "k_10": {
+      "oracle": {
+        "oracle_mean": 0.894,
+        "best_fixed_name": "dense",
+        "best_fixed_score": 0.884,
+        "headroom_absolute": 0.010000000000000009,
+        "headroom_relative_pct": 1.1312217194570147,
+        "per_query_best_counts": {
+          "bm25": 153,
+          "dense": 344,
+          "hybrid": 3
+        },
+        "per_retriever_means": {
+          "bm25": 0.2,
+          "dense": 0.884,
+          "hybrid": 0.62
+        }
+      },
+      "disagreement": {
+        "total_queries": 500,
+        "all_agree": 149,
+        "all_agree_pct": 29.799999999999997,
+        "disagree": 351,
+        "disagree_pct": 70.19999999999999,
+        "all_correct": 96,
+        "all_correct_pct": 19.2,
+        "none_correct": 53,
+        "none_correct_pct": 10.6,
+        "some_correct": 351,
+        "some_correct_pct": 70.19999999999999
+      }
+    }
+  }
+}

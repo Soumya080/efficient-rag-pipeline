@@ -4,3 +4,6 @@ ollama
 faiss-cpu
 datasets
 tqdm
+matplotlib
+pandas
+scikit-learn

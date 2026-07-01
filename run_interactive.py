@@ -1,6 +1,15 @@
 import os
+import sys
 import argparse
 import time
+
+# Configure stdout to use UTF-8 to prevent UnicodeEncodeError on Windows
+if sys.platform.startswith('win'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+
 from src.pipeline import RAGPipeline
 
 def main():
@@ -9,6 +18,7 @@ def main():
     parser.add_argument("--chunking", type=str, default="semantic", help="Chunking strategy")
     parser.add_argument("--mode", type=str, default="hybrid", help="Retrieval mode")
     parser.add_argument("--model", type=str, default="all-MiniLM-L6-v2", help="Embedding model")
+    parser.add_argument("--llm-model", type=str, default="phi3", help="Ollama LLM model name")
     parser.add_argument("--no-llm", action="store_true", help="Disable LLM answer generation")
     args = parser.parse_args()
 
@@ -23,21 +33,21 @@ def main():
     # Ingest documents
     try:
         stats = pipeline.ingest(args.data, verbose=False)
-        print(f"  → Found {stats['num_docs']} documents")
-        print(f"  → Chunking strategy: {args.chunking}")
-        print(f"  → Generated {stats['num_chunks']} chunks")
+        print(f"  -> Found {stats['num_docs']} documents")
+        print(f"  -> Chunking strategy: {args.chunking}")
+        print(f"  -> Generated {stats['num_chunks']} chunks")
         print(f"\n[RAG Pipeline] Building indexes...")
-        print(f"  → FAISS index: {stats['num_chunks']} vectors ({pipeline.encoder.dimension} dimensions)")
-        print(f"  → BM25 corpus: {stats['num_chunks']} documents fitted")
-        print(f"  → Total ingestion time: {stats['time']:.2f}s")
+        print(f"  -> FAISS index: {stats['num_chunks']} vectors ({pipeline.encoder.dimension} dimensions)")
+        print(f"  -> BM25 corpus: {stats['num_chunks']} documents fitted")
+        print(f"  -> Total ingestion time: {stats['time']:.2f}s")
     except Exception as e:
         print(f"Error during ingestion: {e}")
         return
 
-    print("\n" + "═"*51)
-    print("  RAG Pipeline Ready — Type your questions below")
+    print("\n" + "="*51)
+    print("  RAG Pipeline Ready - Type your questions below")
     print("  Type 'quit' to exit | 'stats' for pipeline info")
-    print("═"*51 + "\n")
+    print("="*51 + "\n")
 
     while True:
         try:
@@ -58,10 +68,11 @@ def main():
                 question=query, 
                 top_k=3, 
                 use_llm=not args.no_llm,
+                llm_model=args.llm_model,
                 verbose=False
             )
             
-            print(f"\n───── Retrieved Chunks ({len(result['retrieved'])}) " + "─"*25)
+            print(f"\n----- Retrieved Chunks ({len(result['retrieved'])}) " + "-"*25)
             for i, chunk in enumerate(result['retrieved']):
                 score_str = f"Score: {chunk.get('score', 0):.4f} | " if 'score' in chunk else ""
                 text = chunk.get('content', '')
@@ -71,13 +82,13 @@ def main():
                 print(f"      \"{text}\"\n")
                 
             if result.get('answer'):
-                print("───── Answer " + "─"*39)
+                print("----- Answer " + "-"*39)
                 print(result['answer'])
                 print()
                 
             s = result['stats']
             tokens = len(result['context']) // 4  # rough estimate
-            print("───── Stats " + "─"*40)
+            print("----- Stats " + "-"*40)
             print(f"  Retrieval time: {s.get('retrieval_time', 0):.4f}s | Mode: {args.mode} | Tokens: ~{tokens}\n")
 
         except KeyboardInterrupt:
