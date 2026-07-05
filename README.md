@@ -49,7 +49,7 @@ graph TD;
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YourUsername/efficient-rag-pipeline.git
+git clone https://github.com/Soumya080/efficient-rag-pipeline.git
 cd efficient-rag-pipeline
 
 # 2. Install dependencies
